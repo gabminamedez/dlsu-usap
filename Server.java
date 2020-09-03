@@ -29,6 +29,9 @@ public class  Server {
             if(!c.getUserName().equals(user)){
                 c.sendMessage(user,message);
             }
+            else{
+                c.sendMessage(user,message);
+            }
         }
     }
 
