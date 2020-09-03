@@ -8,69 +8,106 @@ import static java.lang.System.out;
 public class Client extends JFrame implements ActionListener{
 
     private static final long serialVersionUID = 3156748499018424211L;
-    String uname;
+    String username;
     PrintWriter pw;
     BufferedReader br;
     JTextArea  taMessages;
     JTextField tfInput;
-    JButton btnSend,btnExit;
+    JButton btnSendMessage, btnSendFile, btnLogout;
     Socket client;
+    JFileChooser fc = new JFileChooser();
 
-    public Client(String uname, String servername) throws Exception{
-        super(uname);  // set title for frame
-        this.uname = uname;
-        client  = new Socket(servername,9999);
-        br = new BufferedReader( new InputStreamReader( client.getInputStream()) ) ;
-        pw = new PrintWriter(client.getOutputStream(),true);
-        pw.println(uname);  // send name to server
+    public Client(String username, String ip, int port) throws Exception{
+        super(username + " - De La Salle Usap");
+        this.username = username;
+        client  = new Socket(ip, port);
+        br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        pw = new PrintWriter(client.getOutputStream(), true);
+        pw.println(username);  // send name to server
         buildInterface();
         new MessagesThread().start();  // create thread for listening for messages
     }
     
     public void buildInterface(){
-        btnSend = new JButton("Send");
-        btnExit = new JButton("Exit");
         taMessages = new JTextArea();
-        taMessages.setRows(10);
+        taMessages.setRows(20);
         taMessages.setColumns(50);
         taMessages.setEditable(false);
-        tfInput  = new JTextField(50);
         JScrollPane sp = new JScrollPane(taMessages, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(sp, "Center");
+
+        tfInput = new JTextField(50);
+        btnSendMessage = new JButton("Send");
+        btnSendFile = new JButton("Send File");
+        btnLogout = new JButton("Logout");
+
         JPanel bp = new JPanel(new FlowLayout());
         bp.add(tfInput);
-        bp.add(btnSend);
-        bp.add(btnExit);
+        bp.add(btnSendMessage);
+        bp.add(btnSendFile);
+        bp.add(btnLogout);
         add(bp, "South");
-        btnSend.addActionListener(this);
-        btnExit.addActionListener(this);
-        setSize(500, 300);
+
+        btnSendMessage.addActionListener(this);
+        btnSendFile.addActionListener(this);
+        btnLogout.addActionListener(this);
+
+        setSize(500, 500);
         setVisible(true);
         pack();
     }
     
-    public void actionPerformed(ActionEvent evt){
-        if(evt.getSource() == btnExit){
+    public void actionPerformed(ActionEvent e){
+        if(e.getSource() == btnSendMessage){
+            pw.println(tfInput.getText());
+        }
+        else if(e.getSource() == btnSendFile){
+            int returnVal = fc.showOpenDialog(this);
+
+            if(returnVal == JFileChooser.APPROVE_OPTION){
+                File file = fc.getSelectedFile();
+                pw.println("Sent the file " + file.getName() + ".");
+            }
+        } 
+        else if(e.getSource() == btnLogout){
             pw.println("end");
             System.exit(0);
         } 
-        else{
-            pw.println(tfInput.getText());
-        }
     }
     
-    public static void main(String ... args){
-        String name = JOptionPane.showInputDialog(null, "Enter your name :", "Username", JOptionPane.PLAIN_MESSAGE);
-        String servername = "localhost";  
-        try{
-            new Client(name, servername);
-        } catch(Exception ex){
-            out.println("Error --> " + ex.getMessage());
+    public static void main(String ... args) throws Exception{
+        JTextField ip = new JTextField();
+        JTextField port = new JTextField();
+        JTextField username = new JTextField();
+
+        Object[] message = {
+            "Server IP Address:", ip,
+            "Server Port Number:", port,
+            "Username:", username
+        };
+
+        while(true){
+            int option = JOptionPane.showConfirmDialog(null, message, "Welcome to De La Salle Usap!", JOptionPane.OK_CANCEL_OPTION);
+            if(option == JOptionPane.OK_OPTION){
+                if(ip.getText().equals("localhost") && port.getText().equals("8080") && !username.getText().isEmpty()){
+                    out.println("Login successful!");
+                    int portNum = Integer.parseInt(port.getText());
+                    new Client(username.getText(), ip.getText(), portNum);
+                    break;
+                }
+                else{
+                    out.println("login failed!");
+                    continue;
+                }
+            }
+            else{
+                out.println("Login cancelled!");
+                break;
+            }
         }
-        
     }
 
-    class  MessagesThread extends Thread{
+    class MessagesThread extends Thread{
         public void run(){
             String line;
             try{

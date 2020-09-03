@@ -1,16 +1,18 @@
-// Chat Server runs at port no. 9999
 import java.io.*;
 import java.util.*;
 import java.net.*;
 import static java.lang.System.out;
 
-public class  Server {
+public class Server{
+
     Vector<String> users = new Vector<String>();
     Vector<HandleClient> clients = new Vector<HandleClient>();
 
     public void process() throws Exception{
-        ServerSocket server = new ServerSocket(9999, 10);
-        out.println("Server Started...");
+        ServerSocket server = new ServerSocket(8080, 2);
+        out.println("Server started!");
+        out.println("IP Address: localhost");
+        out.println("Port: 8080");
 
         while(true){
             Socket client = server.accept();
@@ -23,14 +25,13 @@ public class  Server {
         new Server().process();
     }
 
-    public void broadcast(String user, String message)  {
-        // send message to all connected users
+    public void broadcast(String user, String message){
         for(HandleClient c: clients){
-            if(!c.getUserName().equals(user)){
-                c.sendMessage(user,message);
+            if(!c.getUsername().equals(user)){
+                c.sendMessage(user, message);
             }
             else{
-                c.sendMessage(user,message);
+                c.sendMessage(user, message);
             }
         }
     }
@@ -54,21 +55,17 @@ public class  Server {
             output.println(uname + ": " + msg);
         }
         
-        public String getUserName(){  
-            return name; 
+        public String getUsername(){  
+            return name;
         }
 
         public void run(){
-                String line;
+            String line;
+
             try{
                 while(true){
                     line = input.readLine();
-                    if(line.equals("end")){
-                        clients.remove(this);
-                        users.remove(name);
-                        break;
-                    }
-                broadcast(name, line);
+                    broadcast(name, line);
                 }
             } catch(Exception ex){
                 System.out.println(ex.getMessage());
