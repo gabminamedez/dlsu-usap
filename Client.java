@@ -20,7 +20,7 @@ public class Client extends JFrame implements ActionListener{
     public Client(String username, String ip, int port) throws Exception{
         super(username + " - De La Salle Usap");
         this.username = username;
-        client  = new Socket(ip, port);
+        client = new Socket(ip, port);
         br = new BufferedReader(new InputStreamReader(client.getInputStream()));
         pw = new PrintWriter(client.getOutputStream(), true);
         pw.println(username);  // send name to server
