@@ -26,6 +26,7 @@ public class Client extends JFrame implements ActionListener{
         pw.println(username);  // send name to server
         buildInterface();
         new MessagesThread().start();  // create thread for listening for messages
+        pw.println("[AUTO-GENERATED MESSAGE] " + username + " has joined the chat!");
     }
     
     public void buildInterface(){
@@ -70,7 +71,7 @@ public class Client extends JFrame implements ActionListener{
             }
         } 
         else if(e.getSource() == btnLogout){
-            pw.println("end");
+            pw.println("[AUTO-GENERATED MESSAGE] " + username + " has left the chat.");
             System.exit(0);
         } 
     }

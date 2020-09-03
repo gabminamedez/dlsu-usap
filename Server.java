@@ -51,8 +51,8 @@ public class Server{
             start();
         }
 
-        public void sendMessage(String uname, String msg){
-            output.println(uname + ": " + msg);
+        public void sendMessage(String username, String msg){
+            output.println(username + ": " + msg);
         }
         
         public String getUsername(){  
