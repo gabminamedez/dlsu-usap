@@ -8,6 +8,8 @@ public class Server{
     Vector<String> users = new Vector<String>();
     Vector<HandleClient> clients = new Vector<HandleClient>();
 
+    private static File chatlogs = new File("chatlogs.txt");
+
     public void process() throws Exception{
         ServerSocket server = new ServerSocket(8080, 2);
         out.println("Server started!");
@@ -23,9 +25,10 @@ public class Server{
 
     public static void main(String ... args) throws Exception{
         new Server().process();
+        chatlogs.createNewFile();
     }
 
-    public void broadcast(String user, String message){
+    public void broadcast(String user, String message) throws IOException{
         for(HandleClient c: clients){
             if(!c.getUsername().equals(user)){
                 c.sendMessage(user, message);
@@ -51,8 +54,14 @@ public class Server{
             start();
         }
 
-        public void sendMessage(String username, String msg){
-            output.println(username + ": " + msg);
+        public void sendMessage(String username, String msg) throws IOException{
+            String line = username + ": " + msg;
+            output.println(line);
+
+            Writer output;
+            output = new BufferedWriter(new FileWriter(chatlogs, true));
+            output.append(line + "\n");
+            output.close();
         }
         
         public String getUsername(){  

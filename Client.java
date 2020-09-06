@@ -23,13 +23,13 @@ public class Client extends JFrame implements ActionListener{
         client = new Socket(ip, port);
         br = new BufferedReader(new InputStreamReader(client.getInputStream()));
         pw = new PrintWriter(client.getOutputStream(), true);
-        pw.println(username);  // send name to server
+        pw.println(username); // send name to server
         buildInterface();
-        new MessagesThread().start();  // create thread for listening for messages
+        new MessagesThread().start(); // create thread for listening for messages
         pw.println("[AUTO-GENERATED MESSAGE] " + username + " has joined the chat!");
     }
-    
-    public void buildInterface(){
+
+    public void buildInterface() {
         taMessages = new JTextArea();
         taMessages.setRows(20);
         taMessages.setColumns(50);
@@ -57,26 +57,29 @@ public class Client extends JFrame implements ActionListener{
         setVisible(true);
         pack();
     }
-    
-    public void actionPerformed(ActionEvent e){
-        if(e.getSource() == btnSendMessage){
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnSendMessage) {
             pw.println(tfInput.getText());
-        }
-        else if(e.getSource() == btnSendFile){
+        } else if (e.getSource() == btnSendFile) {
             int returnVal = fc.showOpenDialog(this);
 
-            if(returnVal == JFileChooser.APPROVE_OPTION){
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
                 pw.println("Sent the file " + file.getName() + ".");
             }
-        } 
-        else if(e.getSource() == btnLogout){
+        } else if (e.getSource() == btnLogout) {
             pw.println("[AUTO-GENERATED MESSAGE] " + username + " has left the chat.");
+            String onExit = JOptionPane.showInputDialog(null,
+                    "Would you like to save the chat logs? (Enter 'YES' to save)", "", JOptionPane.PLAIN_MESSAGE);
+            if (onExit.equals("YES")) {
+                // save chat logs
+            }
             System.exit(0);
-        } 
+        }
     }
-    
-    public static void main(String ... args) throws Exception{
+
+    public static void main(String... args) throws Exception {
         JTextField ip = new JTextField();
         JTextField port = new JTextField();
         JTextField username = new JTextField();
