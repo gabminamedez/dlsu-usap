@@ -1,11 +1,12 @@
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.*;
 import static java.lang.System.out;
 
-public class Client extends JFrame implements ActionListener{
+public class Client extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 3156748499018424211L;
     String username;
@@ -17,7 +18,7 @@ public class Client extends JFrame implements ActionListener{
     Socket client;
     JFileChooser fc = new JFileChooser();
 
-    public Client(String username, String ip, int port) throws Exception{
+    public Client(String username, String ip, int port) throws Exception {
         super(username + " - De La Salle Usap");
         this.username = username;
         client = new Socket(ip, port);
@@ -65,13 +66,20 @@ public class Client extends JFrame implements ActionListener{
             int returnVal = fc.showOpenDialog(this);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                pw.println("[4] Sent the file " + file.getName() + ".");
+                try{
+                    File file = fc.getSelectedFile();
+                    FileInputStream fis = new FileInputStream(file);
+                    byte b[] = new byte[fis.available()];
+                    fis.read(b, 0, b.length);
+                    OutputStream os = client.getOutputStream();
+                    pw.println("[4] Sent the file " + file.getName() + ".");
+                } catch(IOException err){
+                    // Sad
+                }
             }
         } else if (e.getSource() == btnLogout) {
             pw.println("[2] " + username + " has left the chat.");
-            String onExit = JOptionPane.showInputDialog(null,
-                    "Would you like to save the chat logs? (Enter 'YES' to save)", "", JOptionPane.PLAIN_MESSAGE);
+            String onExit = JOptionPane.showInputDialog(null, "Would you like to save the chat logs? (Enter 'YES' to save)", "", JOptionPane.PLAIN_MESSAGE);
             if (onExit.equals("YES")) {
                 // save chat logs
             }
@@ -90,7 +98,7 @@ public class Client extends JFrame implements ActionListener{
             "Username:", username
         };
 
-        while(true){
+        while(true) {
             int option = JOptionPane.showConfirmDialog(null, message, "Welcome to De La Salle Usap!", JOptionPane.OK_CANCEL_OPTION);
             if(option == JOptionPane.OK_OPTION){
                 if(ip.getText().equals("localhost") && port.getText().equals("8080") && !username.getText().isEmpty()){
@@ -111,7 +119,7 @@ public class Client extends JFrame implements ActionListener{
         }
     }
 
-    class MessagesThread extends Thread{
+    class MessagesThread extends Thread {
         public void run(){
             String line;
             try{
