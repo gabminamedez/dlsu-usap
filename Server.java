@@ -75,7 +75,7 @@ public class Server{
         }
 
         public void sendMessage(String username, String msg) throws IOException{
-            String line = username + ": " + msg;
+            String line = username + ": " + msg.substring(3);
             output.println(line);
 
             Writer output;
