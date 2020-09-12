@@ -26,7 +26,7 @@ public class Client extends JFrame implements ActionListener{
         pw.println(username); // send name to server
         buildInterface();
         new MessagesThread().start(); // create thread for listening for messages
-        pw.println("[AUTO-GENERATED MESSAGE] " + username + " has joined the chat!");
+        pw.println("[1] " + username + " has joined the chat!");
     }
 
     public void buildInterface() {
@@ -60,16 +60,16 @@ public class Client extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnSendMessage) {
-            pw.println(tfInput.getText());
+            pw.println("[3] " + tfInput.getText());
         } else if (e.getSource() == btnSendFile) {
             int returnVal = fc.showOpenDialog(this);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
-                pw.println("Sent the file " + file.getName() + ".");
+                pw.println("[4] Sent the file " + file.getName() + ".");
             }
         } else if (e.getSource() == btnLogout) {
-            pw.println("[AUTO-GENERATED MESSAGE] " + username + " has left the chat.");
+            pw.println("[2] " + username + " has left the chat.");
             String onExit = JOptionPane.showInputDialog(null,
                     "Would you like to save the chat logs? (Enter 'YES' to save)", "", JOptionPane.PLAIN_MESSAGE);
             if (onExit.equals("YES")) {

@@ -37,6 +37,26 @@ public class Server{
                 c.sendMessage(user, message);
             }
         }
+        if(message != null){
+            char[] msg = message.toCharArray(); 
+            switch(msg[1]) {
+                case '1':
+                    out.println("[" + user + "] has logged in");
+                    break;
+                case '2':
+                    out.println("[" + user + "] has disconnected");
+                    break;
+                case '3':
+                    out.println("[" + user + "] has sent message");
+                    break;
+                case '4':
+                    out.println("[" + user + "] has sent a file");
+                    break;
+                default:
+                    out.println("Case not found");
+            }
+            
+        }
     }
 
     class HandleClient extends Thread{
