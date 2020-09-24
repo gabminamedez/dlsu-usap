@@ -1,14 +1,17 @@
 import java.io.*;
 import java.util.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import static java.lang.System.out;
 
 public class Server{
 
     Vector<String> users = new Vector<String>();
     Vector<HandleClient> clients = new Vector<HandleClient>();
+    Vector<Socket> sockets = new Vector<Socket>();
 
     private static File chatlogs = new File("chatlogs.txt");
+    private static int logsCount = 0;
 
     public void process() throws Exception{
         ServerSocket server = new ServerSocket(8080, 2);
@@ -18,6 +21,7 @@ public class Server{
 
         while(true){
             Socket client = server.accept();
+            sockets.add(client);
             HandleClient c = new HandleClient(client);
             clients.add(c);
         }
@@ -37,6 +41,7 @@ public class Server{
                 c.sendMessage(user, message);
             }
         }
+
         if(message != null){
             char[] msg = message.toCharArray(); 
             switch(msg[1]) {
@@ -45,6 +50,10 @@ public class Server{
                     break;
                 case '2':
                     out.println("[" + user + "] has disconnected");
+                    int toRemove = users.indexOf(user);
+                    users.remove(new String(user));
+                    clients.remove(toRemove);
+                    sockets.remove(toRemove);
                     break;
                 case '3':
                     out.println("[" + user + "] has sent message");
@@ -55,8 +64,8 @@ public class Server{
                 default:
                     out.println("Case not found");
             }
-            
         }
+
     }
 
     class HandleClient extends Thread{
@@ -78,10 +87,24 @@ public class Server{
             String line = username + ": " + msg.substring(3);
             output.println(line);
 
-            Writer output;
-            output = new BufferedWriter(new FileWriter(chatlogs, true));
-            output.append(line + "\n");
-            output.close();
+            if(clients.size() == 1){
+                Writer output;
+                String time = new SimpleDateFormat("MM-dd-yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
+                output = new BufferedWriter(new FileWriter(chatlogs, true));
+                output.append("[" + time + "] " + line + "\n");
+                output.close();
+            }
+            else if(clients.size() == 2 && logsCount == 0){
+                Writer output;
+                String time = new SimpleDateFormat("MM-dd-yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
+                output = new BufferedWriter(new FileWriter(chatlogs, true));
+                output.append("[" + time + "] " + line + "\n");
+                output.close();
+                logsCount = 1;
+            }
+            else if(clients.size() == 2 && logsCount == 1){
+                logsCount = 0;
+            }
         }
         
         public String getUsername(){  
