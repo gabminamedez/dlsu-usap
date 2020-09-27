@@ -44,25 +44,32 @@ public class Server{
 
         if(message != null){
             char[] msg = message.toCharArray(); 
+            String time = new SimpleDateFormat("MM-dd-yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
+            String other = "";
+            for(HandleClient c: clients){
+                if(!c.getUsername().equals(user)){
+                    other = c.getUsername();
+                }
+            }
             switch(msg[1]) {
                 case '1':
-                    out.println("[" + user + "] has logged in");
+                    out.println("[" + user + "] has logged in at " + time);
                     break;
                 case '2':
-                    out.println("[" + user + "] has disconnected");
+                    out.println("[" + user + "] has disconnected at " + time);
                     int toRemove = users.indexOf(user);
                     users.remove(new String(user));
                     clients.remove(toRemove);
                     sockets.remove(toRemove);
                     break;
                 case '3':
-                    out.println("[" + user + "] has sent message");
+                    out.println("[" + user + "] has sent a message to " + other + " at " + time);
                     break;
                 case '4':
-                    out.println("[" + user + "] has sent a file");
+                    out.println("[" + user + "] has sent a file to " + other + " at " + time);
                     break;
                 default:
-                    out.println("Case not found");
+                    out.println("Case not found " + time);
             }
         }
 
