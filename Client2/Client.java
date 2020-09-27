@@ -30,6 +30,43 @@ public class Client extends JFrame implements ActionListener {
         pw.println("[1] " + username + " has joined the chat!");
     }
 
+    public static void welcome() {
+        JTextField ip = new JTextField();
+        JTextField port = new JTextField();
+        JTextField username = new JTextField();
+
+        Object[] message = {
+            "Server IP Address:", ip,
+            "Server Port Number:", port,
+            "Username:", username
+        };
+
+        while(true) {
+            int option = JOptionPane.showConfirmDialog(null, message, "Welcome to De La Salle Usap!", JOptionPane.OK_CANCEL_OPTION);
+
+            if(option == JOptionPane.OK_OPTION){
+                if(ip.getText().equals("localhost") && port.getText().equals("8080") && !username.getText().isEmpty()){
+                    try {
+                        out.println("Login successful!");
+                        int portNum = Integer.parseInt(port.getText());
+                        new Client(username.getText(), ip.getText(), portNum);
+                        break;
+                    } catch (Exception e){
+
+                    }
+                }
+                else{
+                    out.println("login failed!");
+                    continue;
+                }
+            }
+            else{
+                out.println("Login cancelled!");
+                System.exit(0);
+            }
+        }
+    }
+
     public void buildInterface() {
         taMessages = new JTextArea();
         taMessages.setRows(20);
@@ -53,6 +90,14 @@ public class Client extends JFrame implements ActionListener {
         btnSendMessage.addActionListener(this);
         btnSendFile.addActionListener(this);
         btnLogout.addActionListener(this);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                pw.println("[2] " + username + " has left the chat.");
+                dispose();
+                welcome();
+            }
+        });
 
         setSize(500, 500);
         setVisible(true);
@@ -79,44 +124,13 @@ public class Client extends JFrame implements ActionListener {
             }
         } else if (e.getSource() == btnLogout) {
             pw.println("[2] " + username + " has left the chat.");
-            String onExit = JOptionPane.showInputDialog(null, "Would you like to save the chat logs? (Enter 'YES' to save)", "", JOptionPane.PLAIN_MESSAGE);
-            if (onExit.equals("YES")) {
-                // save chat logs
-            }
-            System.exit(0);
+            dispose();
+            welcome();
         }
     }
 
-    public static void main(String... args) throws Exception {
-        JTextField ip = new JTextField();
-        JTextField port = new JTextField();
-        JTextField username = new JTextField();
-
-        Object[] message = {
-            "Server IP Address:", ip,
-            "Server Port Number:", port,
-            "Username:", username
-        };
-
-        while(true) {
-            int option = JOptionPane.showConfirmDialog(null, message, "Welcome to De La Salle Usap!", JOptionPane.OK_CANCEL_OPTION);
-            if(option == JOptionPane.OK_OPTION){
-                if(ip.getText().equals("localhost") && port.getText().equals("8080") && !username.getText().isEmpty()){
-                    out.println("Login successful!");
-                    int portNum = Integer.parseInt(port.getText());
-                    new Client(username.getText(), ip.getText(), portNum);
-                    break;
-                }
-                else{
-                    out.println("login failed!");
-                    continue;
-                }
-            }
-            else{
-                out.println("Login cancelled!");
-                break;
-            }
-        }
+    public static void main(String... args) {
+        welcome();
     }
 
     class MessagesThread extends Thread {
