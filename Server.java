@@ -63,10 +63,20 @@ public class Server{
                     sockets.remove(toRemove);
                     break;
                 case '3':
-                    out.println("[" + user + "] has sent a message to " + other + " at " + time);
+                    if(clients.size() == 1){
+                        out.println("[" + user + "] has tried to send a message at " + time);
+                    }
+                    else{
+                        out.println("[" + user + "] has sent a message to " + other + " at " + time);
+                    }
                     break;
                 case '4':
-                    out.println("[" + user + "] has sent a file to " + other + " at " + time);
+                    if(clients.size() == 1){
+                        out.println("[" + user + "] has tried to send a message at " + time);
+                    }
+                    else{
+                        out.println("[" + user + "] has sent a file to " + other + " at " + time);
+                    }
                     break;
                 default:
                     out.println("Case not found " + time);
@@ -92,7 +102,12 @@ public class Server{
 
         public void sendMessage(String username, String msg) throws IOException{
             String line = username + ": " + msg.substring(3);
-            output.println(line);
+            if(clients.size() == 1){
+                output.println("Hello, " + username + "! Let's wait for another client to connect for you to be able to send messages.");
+            }
+            else{
+                output.println(line);
+            }
 
             if(clients.size() == 1){
                 Writer output;
