@@ -1,5 +1,5 @@
 # dlsu-usap
-This is a one-on-one Java chat application that allows clients to send and receive messages and files through a server.
+This is a Java chat application that allows clients to send and receive messages and files through a server. Socket programming was implemented in this project for it to work.
 
 ### Authors: Gabriel Minamedez, Carlo Santos
 
